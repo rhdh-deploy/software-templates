@@ -77,6 +77,13 @@ spec:
           cluster_id: ${{parameters.cluster_id}}
           namespace: ${{parameters.namespace}}
           component_id: ${{parameters.namespace}}-poi-map-app
+
+    - id: wait01
+      name: Waiting for 10 Seconds before continuing...
+      action: 'debug:wait'
+      input:
+        seconds: 10
+
     - id: publishSource
       name: Publishing to Source Code Repository
       action: publish:github
@@ -93,13 +100,20 @@ spec:
       name: Waiting for asset availability via GitHub API
       action: 'debug:wait'
       input:
-        seconds: 2    
+        seconds: 10   
     - id: registerSource
       name: Registering the Source Code Component
       action: catalog:register
       input:
         repoContentsUrl: ${{steps.publishSource.output.repoContentsUrl}}
         catalogInfoPath: /catalog-info.yaml
+
+    - id: wait03
+      name: Waiting for 10 Seconds before continuing...
+      action: 'debug:wait'
+      input:
+        seconds: 10
+
     - id: templateGitops
       name: Generating the deployment resources and artefacts
       action: fetch:template
@@ -119,6 +133,13 @@ spec:
           image_name: ${{parameters.namespace}}/poi-map-app
           image_tag: ${{parameters.image_tag}}
         targetPath: ./tenant-gitops
+
+    - id: wait04
+      name: Waiting for 10 Seconds before continuing...
+      action: 'debug:wait'
+      input:
+        seconds: 10
+
     - id: publishGitops
       name: Publishing to Deployment Resource Repository
       action: publish:github
@@ -130,6 +151,13 @@ spec:
         defaultBranch: main
         protectDefaultBranch: false
         repoVisibility: public
+
+    - id: wait05
+      name: Waiting for 10 Seconds before continuing...
+      action: 'debug:wait'
+      input:
+        seconds: 10
+      
     - id: createArgoResources
       name: Create ArgoCD Resources
       action: argocd:create-resources
